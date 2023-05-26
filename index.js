@@ -1,83 +1,47 @@
 const express = require('express');
 const app = express();
 
+// Inisialisasi Firebase Admin SDK
 const admin = require('firebase-admin');
 const serviceAccount = require('./serviceAccountKey.json');
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert(serviceAccount)
 });
-
-app.use(express.json());
-
-app.use(express.urlencoded({ extended: true }));
 
 const db = admin.firestore();
 
-app.post('/create', async (req, res) => {
+app.use(express.json());
+
+// API endpoint untuk user registration
+app.post('/api/register', async (req, res) => {
+    const { name, email, password } = req.body;
+
+    // Validasi panjang password
+    if (password.length < 8) {
+        return res.status(400).json({ error: true, message: 'Password must be at least 8 characters' });
+    }
+
     try {
-        console.log(req.body);
-        const id = req.body.email;
-        const userJson = {
-            email: req.body.email,
-            firstName: req.body.firstName,
-            lastName: req.body.lastName
-        };
-        const response = await db.collection('users').add(userJson);
-        res.send(response);
+        // Cek apakah email sudah terdaftar
+        const snapshot = await db.collection('users').where('email', '==', email).get();
+        if (!snapshot.empty) {
+            return res.status(400).json({ error: true, message: 'Email already exists' });
+        }
+
+        // Simpan data user ke Firebase Firestore
+        await db.collection('users').add({ name, email, password });
+
+        // Response sukses
+        res.status(201).json({ error: false, message: 'User Created' });
     } catch (error) {
-        res.send(error);
+        // Jika terjadi kesalahan saat menyimpan data
+        console.error('Error registering user:', error);
+        res.status(500).json({ error: true, message: 'Failed to register user' });
     }
 });
 
-app.get('/read/all', async (req, res) => {
-    try {
-        const usersRef = db.collection("users");
-        const response = await usersRef.get();
-        let responseArr = [];
-        response.forEach(doc => {
-            responseArr.push(doc.data());
-        });
-        res.send(responseArr);
-    } catch (error) {
-        res.send(error);
-    }
-});
-
-app.get('/read/:id', async (req, res) => {
-    try {
-        const userRef = db.collection("users").doc(req.params.id);
-        const response = await userRef.get();
-        res.send(response.data());
-    } catch (error) {
-        res.send(error);
-    }
-});
-
-app.post('/update', async (req, res) => {
-    try {
-        const id = req.body.id;
-        const newfirstName = "hello world!";
-        const userRef = await db.collection("users").doc(id)
-            .update({
-                firstName: newfirstName
-            })
-        res.send(userRef);
-    } catch (error) {
-        res.send(error);
-    }
-});
-
-app.delete('/delete/:id', async (req, res) => {
-    try {
-        const response = await db.collection("users").doc(req.params.id).delete();
-        res.send(response);
-    } catch (error) {
-        res.send(error);
-    }
-});
-
-const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
-    console.log(`Server is running on PORT ${PORT}.`);
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+    console.log(`Server running on port ${port}`);
 });
