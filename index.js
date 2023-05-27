@@ -59,15 +59,16 @@ app.post('/api/login', async (req, res) => {
             return res.status(401).json({ error: true, message: 'Invalid password' });
         }
 
-        // generate token JWT menggunakan firebase-adm
-        const customToken = await admin.auth().createCustomToken(user.userId);
+        // generate custom token JWT menggunakan Firebase Admin SDK
+        const uid = querySnapshot.docs[0].id;
+        const customToken = await admin.auth().createCustomToken(uid);
 
         // respon dengan data user dan token
         res.status(200).json({
             error: false,
             message: 'Success',
             loginResult: {
-                userId: user.userId,
+                userId: uid,
                 name: user.name,
                 token: customToken,
             },
@@ -77,9 +78,4 @@ app.post('/api/login', async (req, res) => {
         console.error('Error logging in:', error);
         res.status(500).json({ error: true, message: 'Failed to login' });
     }
-});
-
-const port = process.env.PORT || 8080;
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
 });
