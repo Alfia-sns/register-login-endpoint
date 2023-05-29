@@ -16,4 +16,4 @@
 
 ## Register Endpoint
 - base url : ```http://localhost:8080/api/register```
-- 
+- Method : ```POST```
