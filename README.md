@@ -1,6 +1,6 @@
-# API-Documentation (Login dan Register)
-## Login API
+# API-Documentation (Login dan Register User)
+## Login Endpoint
 - base url : ```http://localhost:8080/api/login```
 
-## Register API
+## Register Endpoint
 - base url : ```http://localhost:8080/api/register```
