@@ -79,3 +79,8 @@ app.post('/api/login', async (req, res) => {
         res.status(500).json({ error: true, message: 'Failed to login' });
     }
 });
+
+const port = process.env.PORT || 8080;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
