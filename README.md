@@ -17,3 +17,8 @@
 ## Register Endpoint
 - base url : ```http://localhost:8080/api/register```
 - Method : ```POST```
+- Response :
+```{
+    "error": false,
+    "message": "User Created"
+}
