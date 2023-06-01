@@ -1,6 +1,6 @@
 # API-Documentation (Login dan Register User)
 ## Login Endpoint
-- base url : ```http://localhost:8080/api/login```
+- base url : ```https://backend-dot-storyverse-app.et.r.appspot.com/api/register```
 - Method : ```POST```
 - Response :
   ```
@@ -15,7 +15,7 @@
 
 
 ## Register Endpoint
-- base url : ```http://localhost:8080/api/register```
+- base url : ```https://backend-dot-storyverse-app.et.r.appspot.com/api/register```
 - Method : ```POST```
 - Response :
 ```
